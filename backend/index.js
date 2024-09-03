@@ -2471,6 +2471,24 @@ app.post('/api/updateGreenPoints', authenticateToken, async (req, res) => {
   }
 });
 
+
+// // GET /api/pickup-agent/:orderId
+// app.get('/:orderId', async (req, res) => {
+//   try {
+//     const orderId = req.params.orderId;
+//     const agent = await PickupAgent.findOne({ orderId });
+
+//     if (!agent) {
+//       return res.status(404).json({ message: 'Pickup agent not found' });
+//     }
+
+//     res.json({ agent });
+//   } catch (error) {
+//     console.error('Error fetching pickup agent:', error);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// });
+
 // Endpoint to get PickUP-order status
 app.get('/api/order-status/:Id', authenticateToken, async (req, res) => {
   const { Id } = req.params;

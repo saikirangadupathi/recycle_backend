@@ -1049,7 +1049,7 @@ const updateInventory = async (scrapBuyerId, updatedItems) => {
           // If the category does not exist in the inventory, create and add it
           inventoryCategory = {
             category: category,
-            items: [{ itemId: item.itemId, name: item.name, quantity: item.quantity }],
+            items: [{ itemId: item.itemId, name: item.name, quantity: item.quantity,paidAmount: item.paidAmount }],
           };
           scrapBuyer.inventory.push(inventoryCategory);
         } else {
@@ -1964,23 +1964,35 @@ app.get('/api/users', async (req, res) => {
     res.status(500).json({ error: 'Error fetching users' });
   }
 });
-// Add or update user
+
+
+
 app.post('/api/users', async (req, res) => {
   try {
     const { id, name, contactNumber, loginCredentials, pickupHistory, reCommerceOrderHistory, couponsHistory, greenpoints, wallet } = req.body;
     
     let user;
     if (id) {
-      user = await User.findOneAndUpdate({ id }, { name, contactNumber, loginCredentials, pickupHistory, reCommerceOrderHistory, couponsHistory, greenpoints, wallet }, { new: true });
+      user = await User.findOneAndUpdate(
+        { id },
+        { name, contactNumber, loginCredentials, pickupHistory, reCommerceOrderHistory, couponsHistory, greenpoints, wallet },
+        { new: true }
+      );
     } else {
       user = new User({ id, name, contactNumber, loginCredentials, pickupHistory, reCommerceOrderHistory, couponsHistory, greenpoints, wallet });
       await user.save();
     }
+
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: 'Error adding/updating user' });
   }
 });
+
+
+
+
+
 // Delete user
 app.delete('/api/users/:id', async (req, res) => {
   try {
@@ -2031,51 +2043,68 @@ app.post('/api/saveCart', authenticateToken, async (req, res) => {
   }
 });
 
-app.post('/api/signup', async (req, res) => {
+app.post("/api/signup", async (req, res) => {
   try {
-    const { name, age, contactNumber, loginCredentials } = req.body;
-    const user = new User({ name, age, contactNumber, loginCredentials });
-    await user.save();
-    res.status(201).json({ message: 'Signup successful' });
+    const { name, email, contactNumber, dateOfBirth, gender, loginCredentials } = req.body;
+    
+    const newUser = new User({
+      name,
+      email,
+      contactNumber,
+      dateOfBirth,
+      gender,
+      loginCredentials, // This should be an array of loginCredentialSchema
+    });
+    
+    await newUser.save();
+    res.status(201).json({ message: 'Signup successful', user: newUser });
   } catch (error) {
-    console.error('Error signing up:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error signing up:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 
 
-app.post('/api/login', async (req, res) => {
+
+app.post("/api/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ 'loginCredentials.username': username, 'loginCredentials.password': password });
+
+    const user = await User.findOne({
+      'loginCredentials.username': username,
+      'loginCredentials.password': password
+    });
+
     if (user) {
       const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
-      res.json({ token });
+      res.status(200).json({ message: "User logged in successfully", token });
     } else {
-      res.status(401).json({ error: 'Invalid username or password' });
+      res.status(401).json({ error: "Invalid username or password" });
     }
   } catch (error) {
-    console.error('Error logging in:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error signing in:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 app.post("/addwalletpoints", async (req, res) => {
   try {
-    const userinfo = await user_info.findOne({ email: req.body.email });
+    const { email, wallet, greenpoints } = req.body;
+    
+    const user = await User.findOne({ email });
 
-    if (userinfo) {
-      userinfo.wallet += req.body.wallet;
-      userinfo.greenpoints += req.body.greenpoints;
-      await userinfo.save();
-
+    if (user) {
+      user.wallet = String(Number(user.wallet) + wallet);
+      user.greenpoints += greenpoints;
+      await user.save();
       res.status(200).json({ message: "Wallet points added successfully" });
     } else {
       res.status(404).json({ error: "User not found" });
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error updating wallet points:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -2470,24 +2499,6 @@ app.post('/api/updateGreenPoints', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-
-// // GET /api/pickup-agent/:orderId
-// app.get('/:orderId', async (req, res) => {
-//   try {
-//     const orderId = req.params.orderId;
-//     const agent = await PickupAgent.findOne({ orderId });
-
-//     if (!agent) {
-//       return res.status(404).json({ message: 'Pickup agent not found' });
-//     }
-
-//     res.json({ agent });
-//   } catch (error) {
-//     console.error('Error fetching pickup agent:', error);
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// });
 
 // Endpoint to get PickUP-order status
 app.get('/api/order-status/:Id', authenticateToken, async (req, res) => {

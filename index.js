@@ -47,27 +47,27 @@ const SECRET_KEY = '1234'
 
 const SECRET_KEY_BUYER = '123456'
 
-const agent_info = require('../backend/model/deliveryAgent.js');
-const User = require('../backend/model/user_info.js');
-const Coupon = require('../backend/model/vouchers.js');
-const Product = require('../backend/model/productSchema.js');
-const user_info = require('../backend/model/user_info.js');
-const reCommerceOrders = require('../backend/model/re_commerce.js');
-const ScrapOrders = require('../backend/model/orders.js');
-const RecyclingMaterial = require('../backend/model/recyclingMaterials.js');
+const agent_info = require('./model/deliveryAgent.js');
+const User = require('./model/user_info.js');
+const Coupon = require('./model/vouchers.js');
+const Product = require('./model/productSchema.js');
+const user_info = require('./model/user_info.js');
+const reCommerceOrders = require('./model/re_commerce.js');
+const ScrapOrders = require('./model/orders.js');
+const RecyclingMaterial = require('./model/recyclingMaterials.js');
 
-const Inventory = require('../backend/model/materialsInventory.js'); // Update the path as needed
+const Inventory = require('./model/materialsInventory.js'); // Update the path as needed
 
-const DeliveryAgency = require('../backend/model/deliveryAgencies.js');
+const DeliveryAgency = require('./model/deliveryAgencies.js');
 
-const DeliveryTracking = require('../backend/model/deliveryTracking.js');
-const PickupTracking = require('../backend/model/pickupTracking.js');
+const DeliveryTracking = require('./model/deliveryTracking.js');
+const PickupTracking = require('./model/pickupTracking.js');
 
-const DeliveryManagement = require('../backend/model/deliveryManagement.js');
+const DeliveryManagement = require('./model/deliveryManagement.js');
 
-const Seller = require('../backend/model/sellerSchema.js');
+const Seller = require('./model/sellerSchema.js');
 
-const ScrapBuyer = require('../backend/model/scrapBuyers.js');
+const ScrapBuyer = require('./model/scrapBuyers.js');
 
 
 mongoose.connect(mongo_uri)

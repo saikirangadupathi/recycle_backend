@@ -190,6 +190,66 @@ app.get('/api/mapbox/styles/v1/*', async (req, res) => {
 
 
 
+
+// POST /api/cancellations - Create a new cancellation log
+app.post('/api/cancellations', async (req, res) => {
+  try {
+    const {
+      orderID,
+      sellerId,
+      buyerId,
+      cancelledBy,
+      cancellationReason,
+      orderType,
+      statusBeforeCancellation,
+      previousStatusDate,
+    } = req.body;
+
+    const newCancellationLog = new CancellationsLog({
+      orderID,
+      sellerId,
+      buyerId,
+      cancelledBy,
+      cancellationReason,
+      orderType,
+      statusBeforeCancellation,
+      previousStatusDate,
+    });
+
+    const savedLog = await newCancellationLog.save();
+    res.status(201).json(savedLog);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating cancellation log', error });
+  }
+});
+
+// GET /api/cancellations - Get all cancellation logs or filter them
+app.get('/api/cancellations', async (req, res) => {
+  try {
+    const { orderID, sellerId, buyerId, cancelledBy, orderType } = req.query;
+
+    const query = {};
+    if (orderID) query.orderID = orderID;
+    if (sellerId) query.sellerId = sellerId;
+    if (buyerId) query.buyerId = buyerId;
+    if (cancelledBy) query.cancelledBy = cancelledBy;
+    if (orderType) query.orderType = orderType;
+
+    const cancellations = await CancellationsLog.find(query);
+    res.status(200).json(cancellations);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving cancellation logs', error });
+  }
+});
+
+
+
+
+
+
+
+
+
 app.post('/upload', upload.single('image'), (req, res) => {
   const params = {
     Bucket: "gadupathi",

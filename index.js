@@ -69,6 +69,8 @@ const Seller = require('./model/sellerSchema.js');
 
 const ScrapBuyer = require('./model/scrapBuyers.js');
 
+const CancellationsLog = require('./model/cancellationRecords.js');
+
 
 mongoose.connect(mongo_uri)
   .then(() => {

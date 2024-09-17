@@ -2885,7 +2885,10 @@ app.get('/api/order-status/:Id', authenticateToken, async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
-    res.status(200).json({ status: order.status });
+    res.status(200).json({ 
+      status: order.status, 
+      location: order.location
+    });
   } catch (error) {
     console.error('Error fetching order status:', error);
     res.status(500).json({ error: 'Internal Server Error' });

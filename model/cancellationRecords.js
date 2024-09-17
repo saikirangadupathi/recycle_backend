@@ -15,8 +15,7 @@ const CancellationLogSchema = new mongoose.Schema({
   },
   cancelledBy: {
     type: String,
-    enum: ['Customer', 'ScrapBuyer' ,'DeliveryAgent'], // To store who initiated the cancellation
-    required: true,
+    required: false,
   },
   cancellationReason: {
     type: String, // Reason for the cancellation
